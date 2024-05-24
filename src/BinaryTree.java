@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class BinaryTree<T extends Comparable<T>> {
     private Nodo<T> raiz;
     private int numeroElementos;
@@ -87,79 +90,266 @@ public class BinaryTree<T extends Comparable<T>> {
     }
 
     public boolean eliminarElemento(T value) {
-        boolean resultado = false; // Variable para almacenar el resultado de la eliminación
-        Nodo<T> aux = raiz; // Nodo auxiliar para recorrer el árbol
+        boolean resultado = false;
+        Nodo<T> aux = raiz;
 
-        while (aux != null) { // Bucle para recorrer el árbol
-            // Si el nodo actual contiene el valor a eliminar
+        while (aux != null) {
+            // Si es la raiz
             if (aux.getDato().compareTo(value) == 0) {
-                Nodo<T> nodoAEliminar = aux; // Nodo a eliminar
+                Nodo<T> nodoAEliminar = aux;
+                //Valida si tiene hijos a la derecha
+                if (aux.getDerecha() != null) {
+                    raiz = aux.getDerecha(); //Si tiene hijo lo vuelve raiz
+                    if (nodoAEliminar.getIzquierda() != null) { // Verifica si el nodo a eliminar tiene hijo a la izquierda
+                        insertarNodo((Nodo<T>) nodoAEliminar.getIzquierda()); //Si tiene lo inserta a el arbol
+                        //Se eliminan las referencias a los hijos del nodo a eliminar
+                        nodoAEliminar.setIzquierda(null);
+                        nodoAEliminar.setDerecha(null);
+                    }
+                    //Valida si tiene hijos a la izquierda
+                } else if (aux.getIzquierda() != null) {
+                    raiz = aux.getIzquierda();//Si tiene hijo lo vuelve raiz
+                    if (nodoAEliminar.getDerecha() != null) {//Verifica si el nodo a eliminar tiene hijo a la derecha
+                        insertarNodo((Nodo<T>) nodoAEliminar.getDerecha());//Si lo tiene lo inserta a el arbol
+                        //Se eliminan las referencias a los hijos del nodo a eliminar
+                        nodoAEliminar.setIzquierda(null);
+                        nodoAEliminar.setDerecha(null);
+                    }
+                } else {
+                    //Si no tiene hijos actualiza la raiz a null
+                    raiz = null;
+                }
+                //Confirma que la eliminacion se realizo
+                resultado = true;
+                //Y reinicia la variable auxiliar
+                aux = null;
+            } else if (aux.getIzquierda() != null && aux.getIzquierda().getDato().compareTo(value) == 0) {
+                Nodo<T> nodoAEliminar = aux.getIzquierda();
+                // Si el valor está a la izquierda del nodo que estamos recorriendo
+                // Miramos si tenemos izquierda en el nodo a eliminar
 
-                // Si el nodo a eliminar es la raíz
-                if (aux.getDerecha() != null) { // Si tiene hijo derecho
-                    raiz = aux.getDerecha(); // La raíz se mueve al hijo derecho
-                    // Insertar el subárbol izquierdo del nodo a eliminar en el nuevo árbol
-                    if (nodoAEliminar.getIzquierda() != null) {
-                        insertarNodo((Nodo<T>) nodoAEliminar.getIzquierda());
-                        nodoAEliminar.setIzquierda(null);
-                        nodoAEliminar.setDerecha(null);
-                    }
-                } else if (aux.getIzquierda() != null) { // Si tiene hijo izquierdo
-                    raiz = aux.getIzquierda(); // La raíz se mueve al hijo izquierdo
-                    // Insertar el subárbol derecho del nodo a eliminar en el nuevo árbol
+                if (aux.getIzquierda().getIzquierda() != null) {
+                    // Tenemos Nodo a la izquierda
+                    // Apuntamos el nodo que estamos recorriendo al siguiente del nodo a eliminar
+                    aux.setIzquierda(aux.getIzquierda().getIzquierda());
+                    // Reposicionamos sus hijos
                     if (nodoAEliminar.getDerecha() != null) {
-                        insertarNodo((Nodo<T>) nodoAEliminar.getDerecha());
-                        nodoAEliminar.setIzquierda(null);
-                        nodoAEliminar.setDerecha(null);
+                        agregarDato((T) nodoAEliminar.getDerecha());
                     }
-                } else { // Si el nodo a eliminar es una hoja
-                    raiz = null; // El árbol queda vacío
+                    nodoAEliminar.setDerecha(null);
+                    nodoAEliminar.setIzquierda(null);
+                    resultado = true;
+                    aux = null;
+                } else {
+                    // No tenemos nodo a la izquierda del elemento a eliminar
+                    // Miramos si es nodo hoja
+
+                    if (aux.getIzquierda() == null && aux.getDerecha() == null) {
+                        aux.setIzquierda(null);
+                    } else {
+                        aux.setIzquierda(null);
+                        if (nodoAEliminar.getDerecha() != null) {
+                            insertarNodo((Nodo<T>) nodoAEliminar.getDerecha());
+                        }
+                    }
+
+                    resultado = true;
+                    aux = null;
                 }
 
-                resultado = true; // La eliminación fue exitosa
-                aux = null; // Salir del bucle
-            } else if (aux.getIzquierda() != null && aux.getIzquierda().getDato().compareTo(value) == 0) {
-                // Si el nodo a eliminar está a la izquierda del nodo actual
-                // Código similar al caso anterior para la eliminación
             } else if (aux.getDerecha() != null && aux.getDerecha().getDato().compareTo(value) == 0) {
-                // Si el nodo a eliminar está a la derecha del nodo actual
-                // Código similar al caso anterior para la eliminación
-            } else {
-                // Si el valor a eliminar no se encuentra en el nodo actual,
-                // avanzar hacia el siguiente nodo según el valor comparado
-                if (value.compareTo(aux.getDato()) == 1) {
-                    aux = aux.getDerecha(); // Avanzar a la derecha
+                Nodo<T> nodoAEliminar = aux.getDerecha();
+                // Si el valor está a la derecha del nodo que estamos recorriendo
+                // Miramos si tenemos derecha en el nodo a eliminar
+
+                if (aux.getDerecha().getDerecha() != null) {
+                    // Tenemos Nodo a la izquierda
+                    // Apuntamos el nodo que estamos recorriendo al siguiente del nodo a eliminar
+                    aux.setDerecha(aux.getDerecha().getDerecha());
+                    // Reposicionamos sus hijos
+                    if (nodoAEliminar.getIzquierda() != null) {
+                        agregarDato((T) nodoAEliminar.getIzquierda());
+                    }
+                    nodoAEliminar.setDerecha(null);
+                    nodoAEliminar.setIzquierda(null);
+                    resultado = true;
+                    aux = null;
                 } else {
-                    aux = aux.getIzquierda(); // Avanzar a la izquierda
+                    // No tenemos nodo a la izquierda del elemento a eliminar
+                    // Miramos si es nodo hoja
+
+                    if (aux.getIzquierda().getIzquierda() == null && aux.getDerecha().getDerecha() == null) {
+                        aux.setDerecha(null);
+                    } else {
+                        aux.setDerecha(null);
+                        if (nodoAEliminar.getIzquierda() != null) {
+                            insertarNodo((Nodo<T>) nodoAEliminar.getIzquierda());
+                        }
+
+                    }
+
+                    resultado = true;
+                    aux = null;
+                }
+            } else {
+                if (value.compareTo(aux.getDato()) == 1) {
+                    aux = aux.getDerecha();
+                } else {
+                    aux = aux.getIzquierda();
                 }
             }
         }
-
+        // En caso de borrar el nodo disminuimos la cantidad de nodos en 1
         if (resultado) {
-            numeroElementos--; // Disminuir la cantidad de nodos si se eliminó uno
+            numeroElementos--;
         }
 
-        return resultado; // Devolver el resultado de la eliminación
+        return resultado;
     }
 
     private void insertarNodo(Nodo<T> nodo) {
-        if (raiz == null) { // Si el árbol está vacío
-            raiz = nodo; // El nuevo nodo se convierte en la raíz
-        } else { // Si el árbol no está vacío
-            Nodo<T> aux = raiz; // Nodo auxiliar para recorrer el árbol
+        if (raiz == null) {
+            raiz = nodo;
+            System.out.println("Inserto la raiz");
+        } else {
+            // Necesitamos encontrar en que posición debemos insertar el nodo
+            Nodo<T> aux = raiz;
 
-            while (aux != null) { // Bucle para encontrar la posición adecuada para el nuevo nodo
-                if (aux.getDerecha() == null && aux.getIzquierda() == null) { // Si el nodo actual es una hoja
-                    // Insertar el nuevo nodo como hijo izquierdo o derecho según el valor comparado
+            while (aux != null) {
+                // Comprobamos si tenemos que insertarlo ya
+                // Comprobamos si nodo hoja
+                if (aux.getDerecha() == null && aux.getIzquierda() == null) {
+                    if (nodo.getDato().compareTo(aux.getDato()) == 1) {
+                        // Derecha
+                        System.out.println(nodo.getDato() + " Lo insertamos a la derecha de: " + aux.getDato());
+                        aux.setDerecha(nodo);
+                        aux = null;
+                    } else {
+                        // Izquierda
+                        System.out.println(nodo.getDato() + " Lo insertamos a la izquierda de: " + aux.getDato());
+                        aux.setIzquierda(nodo);
+                        aux = null;
+                    }
                 } else if (nodo.getDato().compareTo(aux.getDato()) == 1 && aux.getDerecha() == null) {
-                    // Insertar el nuevo nodo a la derecha del nodo actual
+                    // Lo insertamos a la derecha
+                    System.out.println(nodo.getDato() + " Lo insertamos a la derecha de: " + aux.getDato());
+                    aux.setDerecha(nodo);
+                    aux = null;
                 } else if (nodo.getDato().compareTo(aux.getDato()) == -1 && aux.getIzquierda() == null) {
-                    // Insertar el nuevo nodo a la izquierda del nodo actual
+                    // Lo insertamos a la izquierda
+                    System.out.println(nodo.getDato() + " Lo insertamos a la izquierda de: " + aux.getDato());
+                    aux.setIzquierda(nodo);
+                    aux = null;
                 } else {
-                    // Avanzar hacia el siguiente nodo según el valor comparado
+                    // Pasamos de nodo
+                    if (nodo.getDato().compareTo(aux.getDato()) == 1) {
+                        aux = aux.getDerecha();
+                    } else {
+                        aux = aux.getIzquierda();
+                    }
                 }
             }
         }
+    }
+
+    //============================== METODOS PREPARCIAL ===================================//
+
+    public float sumaNivelesParesRecursivo(Nodo<T> nodo, int nivel) {
+        if (nodo == null) {
+            return 0;
+        }
+
+        float suma = 0;
+        if (nivel % 2 == 0) {
+            suma += ((Number) nodo.getDato()).floatValue();
+        }
+        return suma + sumaNivelesParesRecursivo(nodo.getIzquierda(), nivel + 1) +
+                sumaNivelesParesRecursivo(nodo.getDerecha(), nivel + 1);
+    }
+
+    public float sumaNivelesPares() {
+        if (estaVacio()) {
+            return 0;
+        }
+
+        return sumaNivelesParesRecursivo(raiz, 0);
+    }
+
+    public int alturaRecursiva(Nodo<T> nodo) {
+        if (nodo == null) {
+            return 0;
+        }
+
+        int alturaIzquierda = alturaRecursiva(nodo.getIzquierda());
+        int alturaDerecha = alturaRecursiva(nodo.getDerecha());
+
+        return Math.max(alturaIzquierda, alturaDerecha) + 1;
+    }
+
+    public int altura() {
+        if (estaVacio()) {
+            return 0;
+        }
+
+        return alturaRecursiva(raiz);
+    }
+
+    public LinkedList<Persona> personasConNombreVocal() {
+        LinkedList<Persona> personasVocales = new LinkedList<>();
+        personasConNombreVocal(raiz, personasVocales);
+        return personasVocales;
+    }
+
+    private void personasConNombreVocal(Nodo<T> nodo, LinkedList<Persona> lista) {
+        if (nodo == null) {
+            return;
+        }
+
+        Persona persona = (Persona) nodo.getDato();
+        if (persona != null && nombreComienzaConVocal(persona.getNombre())) {
+            lista.add(persona);
+        }
+
+        personasConNombreVocal(nodo.getIzquierda(), lista);
+        personasConNombreVocal(nodo.getDerecha(), lista);
+    }
+
+    private boolean nombreComienzaConVocal(String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+            return false;
+        }
+
+        char primeraLetra = Character.toLowerCase(nombre.charAt(0));
+        return primeraLetra == 'a' || primeraLetra == 'e' || primeraLetra == 'i' ||
+                primeraLetra == 'o' || primeraLetra == 'u';
+    }
+
+    public int alturaSinRecursividad() {
+        if (raiz == null) {
+            return 0; // Árbol vacío
+        }
+
+        Queue<Nodo<T>> cola = new LinkedList<>();
+        cola.offer(raiz);
+        int altura = 0;
+
+        while (!cola.isEmpty()) {
+            int nivelSize = cola.size();
+            altura++;
+
+            // Agregar todos los nodos del nivel actual a la cola y seguir recorriendo
+            for (int i = 0; i < nivelSize; i++) {
+                Nodo<T> nodo = cola.poll();
+                if (nodo.getIzquierda() != null) {
+                    cola.offer(nodo.getIzquierda());
+                }
+                if (nodo.getDerecha() != null) {
+                    cola.offer(nodo.getDerecha());
+                }
+            }
+        }
+
+        return altura;
     }
 
 
