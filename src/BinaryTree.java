@@ -341,11 +341,11 @@ public class BinaryTree<T extends Comparable<T>> {
 
             // Agregar todos los nodos del nivel actual a la cola y seguir recorriendo
             for (int i = 0; i < nivelSize; i++) {
-                Nodo<T> nodo = cola.poll();
-                if (nodo.getIzquierda() != null) {
-                    cola.offer(nodo.getIzquierda());
-                }
-                if (nodo.getDerecha() != null) {
+                    Nodo<T> nodo = cola.poll();
+                    if (nodo.getIzquierda() != null) {
+                        cola.offer(nodo.getIzquierda());
+                    }
+                    if (nodo.getDerecha() != null) {
                     cola.offer(nodo.getDerecha());
                 }
             }
@@ -386,6 +386,30 @@ public class BinaryTree<T extends Comparable<T>> {
         }
 
         return niveles;
+    }
+
+    public List<List<T>> obtenerNivelesRecursivo() {
+        List<List<T>> niveles = new ArrayList<>();
+        obtenerNivelesRecursivo(raiz, niveles, 0);
+        return niveles;
+    }
+
+    private void obtenerNivelesRecursivo(Nodo<T> nodo, List<List<T>> niveles, int nivel) {
+        if (nodo == null) {
+            return;
+        }
+
+        // Si aún no hay una lista para este nivel, la creamos
+        if (nivel >= niveles.size()) {
+            niveles.add(new ArrayList<>());
+        }
+
+        // Agregamos el dato del nodo al nivel correspondiente
+        niveles.get(nivel).add(nodo.getDato());
+
+        // Llamadas recursivas para los hijos del nodo
+        obtenerNivelesRecursivo(nodo.getIzquierda(), niveles, nivel + 1);
+        obtenerNivelesRecursivo(nodo.getDerecha(), niveles, nivel + 1);
     }
 
     public int contarHojas() {
