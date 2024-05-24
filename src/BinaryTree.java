@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class BinaryTree<T extends Comparable<T>> {
@@ -352,5 +354,140 @@ public class BinaryTree<T extends Comparable<T>> {
         return altura;
     }
 
+    public List<List<T>> obtenerNiveles() {
+        List<List<T>> niveles = new ArrayList<>();
+        if (raiz == null) {
+            return niveles; // Árbol vacío, retornar lista vacía
+        }
+
+        Queue<Nodo<T>> cola = new LinkedList<>();
+        cola.offer(raiz);
+
+        while (!cola.isEmpty()) {
+            int nivelSize = cola.size();
+            List<T> nivelActual = new ArrayList<>();
+
+            // Agregar todos los nodos del nivel actual a la lista
+            for (int i = 0; i < nivelSize; i++) {
+                Nodo<T> nodo = cola.poll();
+                nivelActual.add(nodo.getDato());
+
+                // Agregar los hijos del nodo a la cola para procesarlos en el siguiente nivel
+                if (nodo.getIzquierda() != null) {
+                    cola.offer(nodo.getIzquierda());
+                }
+                if (nodo.getDerecha() != null) {
+                    cola.offer(nodo.getDerecha());
+                }
+            }
+
+            // Agregar el nivel actual a la lista de niveles
+            niveles.add(nivelActual);
+        }
+
+        return niveles;
+    }
+
+    public int contarHojas() {
+        return contarHojas(raiz);
+    }
+
+    private int contarHojas(Nodo<T> nodo) {
+        if (nodo == null) {
+            return 0;
+        }
+
+        // Si el nodo no tiene hijos, es una hoja
+        if (nodo.getIzquierda() == null && nodo.getDerecha() == null) {
+            return 1;
+        }
+
+        // Llamadas recursivas para contar las hojas en los subárboles izquierdo y derecho
+        int hojasIzquierda = contarHojas(nodo.getIzquierda());
+        int hojasDerecha = contarHojas(nodo.getDerecha());
+
+        // Sumar las hojas de ambos subárboles
+        return hojasIzquierda + hojasDerecha;
+    }
+
+    public T encontrarNumeroMenor() {
+        if (raiz == null) {
+            return null; // Árbol vacío
+        }
+
+        Nodo<T> nodoActual = raiz;
+        while (nodoActual.getIzquierda() != null) {
+            nodoActual = nodoActual.getIzquierda();
+        }
+
+        return nodoActual.getDato();
+    }
+
+    public void imprimirAmplitud() {
+        if (raiz == null) {
+            System.out.println("El árbol está vacío");
+            return;
+        }
+
+        Queue<Nodo<T>> cola = new LinkedList<>();
+        cola.offer(raiz);
+
+        while (!cola.isEmpty()) {
+            Nodo<T> nodo = cola.poll();
+            System.out.print(nodo.getDato() + " ");
+
+            if (nodo.getIzquierda() != null) {
+                cola.offer(nodo.getIzquierda());
+            }
+            if (nodo.getDerecha() != null) {
+                cola.offer(nodo.getDerecha());
+            }
+        }
+    }
+
+    public Nodo<T> obtenerNodoMayor() {
+        if (raiz == null) {
+            return null; // Árbol vacío
+        }
+
+        Nodo<T> nodoActual = raiz;
+        while (nodoActual.getDerecha() != null) {
+            nodoActual = nodoActual.getDerecha();
+        }
+
+        return nodoActual;
+    }
+
+    public Nodo<T> obtenerNodoMenor() {
+        if (raiz == null) {
+            return null; // Árbol vacío
+        }
+
+        Nodo<T> nodoActual = raiz;
+        while (nodoActual.getIzquierda() != null) {
+            nodoActual = nodoActual.getIzquierda();
+        }
+
+        return nodoActual;
+    }
+
+    public void borrarArbol() {
+        borrarArbol(raiz);
+        raiz = null; // Establecer la raíz como nula una vez que todos los nodos han sido eliminados
+    }
+
+    private void borrarArbol(Nodo<T> nodo) {
+        if (nodo == null) {
+            return;
+        }
+
+        // Eliminar los nodos de los subárboles izquierdo y derecho recursivamente
+        borrarArbol(nodo.getIzquierda());
+        borrarArbol(nodo.getDerecha());
+
+        // Eliminar el nodo actual
+        nodo.setIzquierda(null);
+        nodo.setDerecha(null);
+    }
 
 }

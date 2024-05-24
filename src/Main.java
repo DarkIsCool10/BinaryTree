@@ -1,5 +1,6 @@
 import javax.sound.midi.Soundbank;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,7 +27,14 @@ public class Main {
         arbol1.agregarDato(4.4f);
         arbol1.agregarDato(7.7f);
         arbol1.agregarDato(9.9f);
+        arbol1.agregarDato(10.9f);
 
+        arbol1.imprimirAmplitud();
+        System.out.println("\n");
+        List<List<Float>> niveles = arbol1.obtenerNiveles();
+        System.out.println(niveles);
+        int hojas = arbol1.contarHojas();
+        System.out.println(hojas);
         int altura = arbol1.alturaSinRecursividad();
         System.out.println(altura);
         //float suma = arbol.sumaNivelesPares();
@@ -47,6 +55,8 @@ public class Main {
         for (Persona persona : personasConNombreVocal) {
             System.out.println(persona.getNombre());
         }
+
+
 
 
     }
